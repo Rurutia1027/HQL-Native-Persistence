@@ -253,5 +253,91 @@ from UserCoupon where status = :status
 ### Batch Operations 
 Batch operations are automatically distributed: 
 ```java
-List<UserCoupoin>
+List<UserCoupoin> coupons = // ... list of coupons 
+queryService.saveAll(coupons); 
+
+// Sharding Sphere routes each coupon to correct shard 
 ```
+
+## Limitations and Tradeoffs 
+### 1. Cross-Shard Transactions 
+
+- **Limitation**: Distributed transactions across shards are complex 
+- **Tradeoff**: Use eventual consistency or limit transactions to single shard 
+- **Solution**: Design operations to be shard-local when possible 
+
+
+### 2. Range Queries 
+
+- **Limitations**: Range queries without sharding key query all shards 
+- **Tradeoff**: Performance impact for cross-shard range queries 
+- **Solution**: Include sharding key in range queries when possible 
+
+### 3. JOIN Operations 
+
+- **Limitation**: JOINs across shards require querying multiple shards
+- **Tradeoff**: Performance overhead for cross-shard JOINs
+- **Solution**: Denormalize data or use application-level joins
+
+
+### 4. Aggregation Queries 
+
+- **Limitations**: Aggregations (SUM, COUNT, etc.) across shards require merging 
+- **Tradeoff**: Additional processing for cross-shard aggregations 
+- **Solution**: Use ShardingSphere's aggregation merging or pre-aggregate data 
+
+### 5. Schema Changes 
+
+- **Limitations**: Schema changes must be applied to all shards 
+- **Tradeoff**: More complex migration process 
+- **Solution**: Use migration tools (Flyway, Liquibase) with shard-aware scripts 
+
+## Monitoring and Debugging 
+### SQL Logging 
+
+Enable SQL logging in `shardingsphere-config.yaml` 
+
+```yaml 
+props: 
+  sql-show: true 
+  sql-simple: true 
+```
+
+This shows: 
+- Actual SQL executed on each shard 
+- Routing decisions made by ShardingSphere 
+- Query execution times 
+
+
+### Shard Information 
+Use `ShardingUtil` to programmatically determine shard location: 
+
+```java 
+int dbIndex = ShardingUtil.calculateDatabaseShard(userId, 32, 2); 
+int tableIndex = ShardingUtil.calculateTableShard(userId, 16); 
+String tableName = ShardingUtil.getShardedTableName("t_user_coupon", userId, 16); 
+```
+
+## Best Practices 
+
+1. **Always Include Sharding Key**: Include sharding key in WHERE clauses when possible
+2. **Design for Sharding**: Choose sharding keys that align with query patterns
+3. **Monitor Distribution**: Regularly check data distribution across shards
+4. **Plan for Growth**: Design sharding strategy to accommodate future growth
+5. **Test Cross-Shard Scenarios**: Test queries that span multiple shards
+6. **Use Transactions Carefully**: Limit transactions to single shard when possible
+7. **Monitor Performance**: Track query performance across shards
+
+
+## Example: Complete Sharding Setup 
+
+See `shardingsphere-config.yaml` for a complete configuraiton example with 
+- Multiple data sources 
+- Database and table sharding 
+- Custom sharding algorithms 
+- Multiple sharded tables 
+
+## References
+- [Apache ShardingSphere Documentation](https://shardingsphere.apache.org/document/current/en/overview/)
+- [ShardingSphere JDBC](https://shardingsphere.apache.org/document/current/en/user-manual/shardingsphere-jdbc/)
+- [Hibernate Documentation](https://docs.jboss.org/hibernate/orm/current/userguide/html_single/Hibernate_User_Guide.html)
