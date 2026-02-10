@@ -19,9 +19,11 @@ A lightweight, flexible persistence layer built on Hibernate/HQL that provides a
 - **Pagination Support**: Built-in pagination utilities 
 
 ## Architecture
-
+### Persistence Common 
 <img width="340" height="600" alt="Screenshot 2026-02-10 at 17 20 31" src="https://github.com/user-attachments/assets/021f522e-c22c-4e3b-ba71-674435e01a9c" />
 
+### Persistence Sharding 
+// TODO 
 
 ## Quick Start 
 
