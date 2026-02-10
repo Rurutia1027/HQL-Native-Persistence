@@ -295,37 +295,13 @@ dataSources:
 **Benefits**:
 - Distributed load across multiple database instances
 - Scale databases independently 
-- High available through sharding 
+- Highly available through sharding 
 - Cost optimization (smaller instances)
 
 ## Architecture
 
-```
-┌─────────────────────────────────────┐
-│     Application Layer               │
-│  (Services, Controllers)            │
-└──────────────┬──────────────────────┘
-               │
-┌──────────────▼──────────────────────┐
-│     QueryService Interface          │
-│  (HQL Queries, HqlQueryBuilder)     │
-└──────────────┬──────────────────────┘
-               │
-┌──────────────▼──────────────────────┐
-│     PersistenceService              │
-│  (Hibernate Session Management)     │
-└──────────────┬──────────────────────┘
-               │
-┌──────────────▼──────────────────────┐
-│  ShardingSphere DataSource          │
-│  (Transparent Sharding Routing)     │
-└──────────────┬──────────────────────┘
-               │
-┌──────────────▼──────────────────────┐
-│     Physical Databases              │
-│  (MySQL, PostgreSQL, Oracle, ...)   │
-└─────────────────────────────────────┘
-```
+<img width="489" height="851" alt="Screenshot 2026-02-10 at 15 57 40" src="https://github.com/user-attachments/assets/4f5652e1-cadf-420e-a94b-67461acca947" />
+
 
 ## Modules 
 ### persistence-common 
