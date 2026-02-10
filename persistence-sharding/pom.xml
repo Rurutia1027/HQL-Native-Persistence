@@ -19,7 +19,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         
         <!-- ShardingSphere -->
-        <shardingsphere.version>5.5.0</shardingsphere.version>
+        <shardingsphere.version>5.4.1</shardingsphere.version>
         
         <!-- Spring -->
         <spring.boot.version>3.3.3</spring.boot.version>
@@ -92,8 +92,23 @@
     </dependencies>
 
     <repositories>
-        <!-- Maven Central Repository -->
+        <!-- Maven Central Repository (Primary) - Force use Central instead of mirrors -->
         <repository>
+            <id>central</id>
+            <name>Maven Central Repository</name>
+            <url>https://repo1.maven.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    
+    <pluginRepositories>
+        <pluginRepository>
             <id>central</id>
             <name>Maven Central Repository</name>
             <url>https://repo1.maven.org/maven2</url>
@@ -103,20 +118,8 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-        </repository>
-        <!-- Apache Snapshot Repository (if needed) -->
-        <repository>
-            <id>apache-snapshots</id>
-            <name>Apache Snapshot Repository</name>
-            <url>https://repository.apache.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <plugins>
