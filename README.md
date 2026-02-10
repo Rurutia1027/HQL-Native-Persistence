@@ -18,6 +18,11 @@ A lightweight, flexible persistence layer built on Hibernate/HQL that provides a
 - **Query Post-Processing**: Pluggable hooks for result transformation 
 - **Pagination Support**: Built-in pagination utilities 
 
+## Architecture
+
+<img width="340" height="600" alt="Screenshot 2026-02-10 at 17 20 31" src="https://github.com/user-attachments/assets/021f522e-c22c-4e3b-ba71-674435e01a9c" />
+
+
 ## Quick Start 
 
 ### Maven Dependency 
@@ -297,11 +302,6 @@ dataSources:
 - Scale databases independently 
 - Highly available through sharding 
 - Cost optimization (smaller instances)
-
-## Architecture
-
-<img width="489" height="851" alt="Screenshot 2026-02-10 at 15 57 40" src="https://github.com/user-attachments/assets/4f5652e1-cadf-420e-a94b-67461acca947" />
-
 
 ## Modules 
 ### persistence-common 
