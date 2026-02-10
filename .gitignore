@@ -222,3 +222,6 @@ credentials/
 
 docs/CLOUD_NATIVE_RDBMS.md
 docs/DATABASE_TYPE_POLICY.md
+
+# GitHub Actions
+.github/workflows/.DS_Store
