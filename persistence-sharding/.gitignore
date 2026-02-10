@@ -1,4 +1,4 @@
-i# Maven
+# Maven
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -219,4 +219,3 @@ credentials/
 # Package lock files (optional - uncomment if you want to ignore)
 # package-lock.json
 # yarn.lock
-

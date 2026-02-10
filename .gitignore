@@ -225,3 +225,5 @@ docs/DATABASE_TYPE_POLICY.md
 
 # GitHub Actions
 .github/workflows/.DS_Store
+
+docs/SPRING_INTEGRATION.md
