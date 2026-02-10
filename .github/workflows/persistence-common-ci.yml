@@ -7,7 +7,8 @@ on:
       - 'persistence-common/**'
       - '.github/workflows/persistence-common-ci.yml'
   pull_request:
-    branches: [ main, develop ]
+    branches: 
+        - '*'
     paths:
       - 'persistence-common/**'
       - '.github/workflows/persistence-common-ci.yml'
