@@ -21,7 +21,7 @@ import java.util.Properties;
 
 
 /**
- * Test configuraiton using Testcontainers for ShardingSphere integration tests. 
+ * Test configuration using Testcontainers for ShardingSphere integration tests. 
  * Creates two PostgreSQL containers to simulate sharded databases. 
  * 
  * Note: For simplicity, this test config uses a single data source. 
@@ -29,7 +29,7 @@ import java.util.Properties;
  * with multiple data sources, which is more complex. These tests focus on 
  * testing the persistence layer functionality. 
 */
-@Configuraiton
+@Configuration
 @EnableTransactionManagement
 public class ShardingTestContainerDBConfig {
     
