@@ -3,7 +3,6 @@ package org.tus.common.sharding.entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.tus.common.domain.persistence.PersistedObject;
 
@@ -13,7 +12,6 @@ import org.tus.common.domain.persistence.PersistedObject;
 */
 @Entity 
 @Table(name = "t_test_sharded")
-@Data
 @EqualsAndHashCode(callSuper = true)
 public class TestShardedEntity extends PersistedObject {
     @Column(name = "user_id", nullable = false)
@@ -27,4 +25,37 @@ public class TestShardedEntity extends PersistedObject {
     
     @Column(name = "status")
     private Integer status;
+    
+    // Getters and Setters
+    public Long getUserId() {
+        return userId;
+    }
+    
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getValue() {
+        return value;
+    }
+    
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
+    public Integer getStatus() {
+        return status;
+    }
+    
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 }

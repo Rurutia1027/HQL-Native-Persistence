@@ -34,6 +34,19 @@
         <postgresql.version>42.7.2</postgresql.version>
         <lombok.version>1.18.30</lombok.version>
     </properties>
+    
+    <dependencyManagement>
+        <dependencies>
+            <!-- Import Spring Boot BOM to manage all Spring Boot dependencies -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Persistence Common Module -->
@@ -48,6 +61,17 @@
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>shardingsphere-jdbc-core</artifactId>
             <version>${shardingsphere.version}</version>
+            <exclusions>
+                <!-- Exclude Logback to let Spring Boot manage the version -->
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- ShardingSphere Algorithm SPI -->
@@ -55,6 +79,17 @@
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>shardingsphere-sharding-api</artifactId>
             <version>${shardingsphere.version}</version>
+            <exclusions>
+                <!-- Exclude Logback to let Spring Boot manage the version -->
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- MySQL Driver -->
@@ -178,7 +213,7 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
-               
+            
             <!-- Unit Tests (runs during test phase) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
