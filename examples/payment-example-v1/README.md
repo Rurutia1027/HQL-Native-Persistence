@@ -30,6 +30,7 @@ payment-examples-v1/
 
 ## Entities
 
+![ER-Diagram](./docs/ER-Diagram.png)
 Based on the design in [SCHEMA_ECOMMERCE_PAYMENT.md](todo), the following entities are include:
 
 - **User** - User table
