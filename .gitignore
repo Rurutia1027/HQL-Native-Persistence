@@ -1,4 +1,4 @@
-i# Maven
+# Maven
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -220,3 +220,5 @@ credentials/
 # package-lock.json
 # yarn.lock
 
+docs/CLOUD_NATIVE_RDBMS.md
+docs/DATABASE_TYPE_POLICY.md
