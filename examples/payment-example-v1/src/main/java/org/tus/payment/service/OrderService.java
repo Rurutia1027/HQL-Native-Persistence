@@ -106,7 +106,7 @@ public class OrderService {
      * Update order status
      */
     @Transactional
-    public Order updateorderStatus(String orderId, Long userId, Integer newStatus) {
+    public Order updateOrderStatus(String orderId, Long userId, Integer newStatus) {
         Order order = getOrderByOrderId(orderId, userId);
         if (order == null) {
             throw new RuntimeException("Order not found: " + orderId);

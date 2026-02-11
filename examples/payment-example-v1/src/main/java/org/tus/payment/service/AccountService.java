@@ -113,7 +113,7 @@ public class AccountService {
     /**
      * Query Account Transaction
      */
-    public List<AccountTransaction> getAccountTransaction(Long userId,
+    public List<AccountTransaction> getAccountTransactions(Long userId,
                                                           Integer transactionType,
                                                           Integer limit) {
         HqlQueryBuilder builder = new HqlQueryBuilder();
