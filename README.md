@@ -1,4 +1,4 @@
-# HQL Native Persistence 
+# HQL Native Persistence | [![Persistence Sharding CI](https://github.com/Rurutia1027/HQL-Native-Persistence/actions/workflows/persistence-sharding-ci.yml/badge.svg)](https://github.com/Rurutia1027/HQL-Native-Persistence/actions/workflows/persistence-sharding-ci.yml)
 
 [![Java](https://img.shields.io/badge/Java-17+-orange.svg)](https://www.oracle.com/java/)
 [![Hibernate](https://img.shields.io/badge/Hibernate-6.x-blue.svg)](https://hibernate.org/)
