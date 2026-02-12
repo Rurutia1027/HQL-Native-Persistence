@@ -1,0 +1,48 @@
+dataSources:
+  ds_ecommerce_0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: org.postgresql.Driver
+    jdbcUrl: jdbc:postgresql://postgres-ecommerce-0:5433/ecommerce_0
+    username: postgres
+    password: postgres
+    maximumPoolSize: 20
+    minimumIdle: 5
+    connectionTimeout: 30000
+    idleTimeout: 600000
+    maxLifetime: 1800000
+
+  ds_ecommerce_1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: org.postgresql.Driver
+    jdbcUrl: jdbc:postgresql://postgres-ecommerce-1:5434/ecommerce_1
+    username: postgres
+    password: postgres
+    maximumPoolSize: 20
+    minimumIdle: 5
+    connectionTimeout: 30000
+    idleTimeout: 600000
+    maxLifetime: 1800000
+
+  ds_payment_0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: org.postgresql.Driver
+    jdbcUrl: jdbc:postgresql://postgres-payment-0:5435/payment_0
+    username: postgres
+    password: postgres
+    maximumPoolSize: 20
+    minimumIdle: 5
+    connectionTimeout: 30000
+    idleTimeout: 600000
+    maxLifetime: 1800000
+
+  ds_payment_1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: org.postgresql.Driver
+    jdbcUrl: jdbc:postgresql://postgres-payment-1:5436/payment_1
+    username: postgres
+    password: postgres
+    maximumPoolSize: 20
+    minimumIdle: 5
+    connectionTimeout: 30000
+    idleTimeout: 600000
+    maxLifetime: 1800000

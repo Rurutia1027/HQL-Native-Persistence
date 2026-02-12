@@ -422,6 +422,23 @@ public class HqlQueryBuilder {
     }
 
     /**
+     * Used to add a conditional less and equal than and value to the
+     * field.
+     *
+     * @param field field on which equality will be evaluated
+     * @param value Value to evaluate less than against
+     * @return builder
+     */
+    public HqlQueryBuilder le(String field, Date value) {
+        String token = getNextToken();
+        injectionParameters.put(token, value);
+        conditions.add(new Conditional(field,
+                WhereConditionalClause.LESS_EQUAL_THAN,
+                ":" + token));
+        return this;
+    }
+
+    /**
      * Used to add a conditional less than and value to the field.
      *
      * @param field field on which equality will be evaluated
