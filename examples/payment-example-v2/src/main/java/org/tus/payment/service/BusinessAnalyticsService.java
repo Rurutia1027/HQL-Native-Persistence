@@ -1,8 +1,8 @@
 package org.tus.payment.service;
 
-import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Order;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.tus.payment.entity.Order;
 import org.tus.common.domain.dao.HqlQueryBuilder;
 import org.tus.common.domain.persistence.QueryService;
 import org.tus.payment.analytics.BusinessMetrics;
@@ -26,9 +26,12 @@ import java.util.Map;
  * - Performance considerations for analytics queries
  */
 @Service
-@RequiredArgsConstructor
 public class BusinessAnalyticsService {
     private final QueryService queryService;
+
+    public BusinessAnalyticsService(@Qualifier("queryService") QueryService queryService) {
+        this.queryService = queryService;
+    }
 
     /**
      * Get overall business metrics across all shards.

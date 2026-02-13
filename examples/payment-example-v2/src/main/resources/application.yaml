@@ -1,0 +1,25 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: payment-example-v2
+
+# ShardingSphere: YAML config location (classpath or file path)
+shardingsphere:
+  config:
+    file: classpath:shardingsphere-config.yaml
+
+# Hibernate (SessionFactory on top of ShardingSphere DataSource)
+hibernate:
+  dialect: org.hibernate.dialect.PostgreSQLDialect
+  hbm2ddl:
+    auto: update
+  show_sql: false
+  format_sql: false
+  use_sql_comments: true
+  jdbc:
+    batch_size: 50
+  order_inserts: true
+  order_updates: true
+  packagesToScan: org.tus.payment.entity

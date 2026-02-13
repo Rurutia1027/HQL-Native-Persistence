@@ -17,6 +17,8 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.tus.common.domain.persistence.PersistenceService;
 import org.tus.common.domain.persistence.QueryService;
+import org.tus.common.sharding.service.ShardingAwareQueryService;
+import org.tus.common.sharding.service.ShardingAwareQueryServiceImpl;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -188,10 +190,20 @@ public class ShardingSphereDataSourceConfig {
 
     /**
      * Creates QueryService that works with sharded data source.
+     * Passes the ShardingSphere DataSource into PersistenceService so queryByJdbc and pool metrics work.
      */
     @Bean
-    public QueryService queryService(SessionFactory sessionFactory) {
-        return new PersistenceService(sessionFactory);
+    public QueryService queryService(SessionFactory sessionFactory, DataSource shardingSphereDataSource) {
+        return new PersistenceService(sessionFactory, shardingSphereDataSource);
+    }
+
+    /**
+     * Sharding-aware query service (single-shard lookup by ID + sharding key, shard info).
+     * Applications can inject this when they need explicit shard routing or shard metadata.
+     */
+    @Bean
+    public ShardingAwareQueryService shardingAwareQueryService(QueryService queryService) {
+        return new ShardingAwareQueryServiceImpl(queryService);
     }
 
     /**

@@ -17,9 +17,9 @@ dataSources:
   ds_ecommerce_0:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: org.postgresql.Driver
-    jdbcUrl: jdbc:postgresql://postgres-ecommerce-0:5433/ecommerce_0
-    username: postgres
-    password: postgres
+    jdbcUrl: jdbc:postgresql://localhost:5433/ecommerce_0
+    username: ecommerce
+    password: ecommerce
     maximumPoolSize: 20
     minimumIdle: 5
     connectionTimeout: 30000
@@ -29,9 +29,9 @@ dataSources:
   ds_ecommerce_1:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: org.postgresql.Driver
-    jdbcUrl: jdbc:postgresql://postgres-ecommerce-1:5434/ecommerce_1
-    username: postgres
-    password: postgres
+    jdbcUrl: jdbc:postgresql://localhost:5434/ecommerce_1
+    username: ecommerce
+    password: ecommerce
     maximumPoolSize: 20
     minimumIdle: 5
     connectionTimeout: 30000
@@ -41,9 +41,9 @@ dataSources:
   ds_payment_0:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: org.postgresql.Driver
-    jdbcUrl: jdbc:postgresql://postgres-payment-0:5435/payment_0
-    username: postgres
-    password: postgres
+    jdbcUrl: jdbc:postgresql://localhost:5435/payment_0
+    username: payment
+    password: payment
     maximumPoolSize: 20
     minimumIdle: 5
     connectionTimeout: 30000
@@ -53,9 +53,9 @@ dataSources:
   ds_payment_1:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
     driverClassName: org.postgresql.Driver
-    jdbcUrl: jdbc:postgresql://postgres-payment-1:5436/payment_1
-    username: postgres
-    password: postgres
+    jdbcUrl: jdbc:postgresql://localhost:5436/payment_1
+    username: payment
+    password: payment
     maximumPoolSize: 20
     minimumIdle: 5
     connectionTimeout: 30000
@@ -147,78 +147,93 @@ rules:
 
     shardingAlgorithms:
       # E-Commerce: 2 DBs × 16 tables = 32 total
+      # CLASS_BASED requires strategy: STANDARD (or HINT) in ShardingSphere 5.4+
       orders_database_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
           sharding-count: "32"
       orders_table_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
 
       order_items_database_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
           sharding-count: "32"
       order_items_table_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
 
       # Payment: 2 DBs × 16 tables = 32
       payment_database_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
           sharding-count: "32"
       payment_table_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
 
       payment_records_database_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
           sharding-count: "32"
       payment_records_table_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
 
       # Refunds: 2 DBs × 8 tables = 16
       refunds_database_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
           sharding-count: "16"
       refunds_table_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
 
       # Account balance: 2 DBs × 1 table
       account_balance_database_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
           sharding-count: "2"
       account_balance_table_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
 
       # Account transactions: 2 DBs × 32 tables = 64
       account_tx_database_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
           sharding-count: "64"
       account_tx_table_mod:
         type: CLASS_BASED
         props:
+          strategy: STANDARD
           algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
 
   # Broadcast table: t_users exists on every data source (same structure, same name).

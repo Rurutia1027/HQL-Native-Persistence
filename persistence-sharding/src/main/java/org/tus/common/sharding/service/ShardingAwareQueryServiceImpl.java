@@ -22,15 +22,22 @@ public class ShardingAwareQueryServiceImpl implements ShardingAwareQueryService 
     }
 
     @Override
+    @Deprecated
     public <T> T findObjectByIdWithShardingKey(Class<T> clazz, String id, Long shardingKey) {
-        // ShardingSphere will automatically route based on sharding key in WHERE clause
-        // We need to include the sharding key in the query
-        String hql = "from " + clazz.getName() + " where id = :id";
-        Map<String, Object> params = Map.of("id", id);
-        
-        // If the entity has a sharding key field, include it in the query
-        // This ensures ShardingSphere routes correctly
-        // Note: The actual routing is handled by ShardingSphere based on table configuration
+        // Delegate to 4-arg with common default "userId"; for other sharding columns use the 4-arg method.
+        return findObjectByIdWithShardingKey(clazz, id, "userId", shardingKey);
+    }
+
+    @Override
+    public <T> T findObjectByIdWithShardingKey(Class<T> clazz, String id, String shardingColumnName, Long shardingKey) {
+        if (shardingColumnName == null || shardingColumnName.isBlank()) {
+            throw new IllegalArgumentException("shardingColumnName must not be null or blank");
+        }
+        // Include sharding key in WHERE so ShardingSphere routes to a single shard.
+        String hql = "from " + clazz.getName() + " where id = :id and " + shardingColumnName + " = :shardingKey";
+        Map<String, Object> params = new java.util.HashMap<>();
+        params.put("id", id);
+        params.put("shardingKey", shardingKey);
         Object result = delegate.querySingle(hql, params, null);
         return result != null ? clazz.cast(result) : null;
     }
@@ -52,10 +59,19 @@ public class ShardingAwareQueryServiceImpl implements ShardingAwareQueryService 
     public ShardInfo getShardInfo(Long shardingKey, int shardingCount, int databaseCount, int tableCount) {
         int dbIndex = ShardingUtil.calculateDatabaseShard(shardingKey, shardingCount, databaseCount);
         int tableIndex = ShardingUtil.calculateTableShard(shardingKey, tableCount);
-        
         String dbName = "ds_" + dbIndex;
-        String tableName = "t_" + tableIndex; // Base name should be provided
-        
+        String tableName = "t_" + tableIndex; // suffix only; use getShardInfo(..., logicalTableName) for full name
+        return new ShardInfo(dbIndex, tableIndex, dbName, tableName);
+    }
+
+    @Override
+    public ShardInfo getShardInfo(Long shardingKey, int shardingCount, int databaseCount, int tableCount, String logicalTableName) {
+        int dbIndex = ShardingUtil.calculateDatabaseShard(shardingKey, shardingCount, databaseCount);
+        int tableIndex = ShardingUtil.calculateTableShard(shardingKey, tableCount);
+        String dbName = "ds_" + dbIndex;
+        String tableName = (logicalTableName != null && !logicalTableName.isBlank())
+            ? logicalTableName + "_" + tableIndex
+            : "t_" + tableIndex;
         return new ShardInfo(dbIndex, tableIndex, dbName, tableName);
     }
 

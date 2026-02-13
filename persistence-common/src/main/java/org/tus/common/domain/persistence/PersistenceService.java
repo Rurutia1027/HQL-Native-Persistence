@@ -2,7 +2,6 @@ package org.tus.common.domain.persistence;
 
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.Metamodel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.util.Strings;
@@ -42,9 +41,14 @@ import java.util.stream.Collectors;
 /**
  * Provides query access to the repository by wrapping Hibernate. All access to the
  * repository should be done through this class.
+ * <p>
+ * SessionFactory is the primary dependency (required for all HQL/entity operations).
+ * DataSource is optional: used only by {@link #queryByJdbc}. When absent, queryByJdbc
+ * will throw NPE. Use the two-arg constructor or setDataSource when raw JDBC or pool
+ * metrics are needed. This keeps the core persistence layer dependent only on
+ * SessionFactory; DataSource is an optional extension.
  */
 
-@AllArgsConstructor
 @Setter
 @Getter
 public class PersistenceService implements QueryService {
@@ -117,6 +121,19 @@ public class PersistenceService implements QueryService {
     public PersistenceService(SessionFactory sessionFactory) {
         super();
         setSessionFactory(sessionFactory);
+    }
+
+    /**
+     * Create a PersistenceService with the provided SessionFactory and DataSource.
+     * Use this when raw JDBC (e.g. queryByJdbc) or connection-pool metrics are needed.
+     *
+     * @param sessionFactory {@link org.hibernate.SessionFactory}
+     * @param dataSource     DataSource (e.g. HikariCP-backed); used by queryByJdbc and optional metrics
+     */
+    public PersistenceService(SessionFactory sessionFactory, DataSource dataSource) {
+        super();
+        setSessionFactory(sessionFactory);
+        setDataSource(dataSource);
     }
 
     @Override
@@ -792,6 +809,10 @@ public class PersistenceService implements QueryService {
 
     @Override
     public String queryByJdbc(String sql, Map<Integer, String> namedParameters, int index) {
+        if (dataSource == null) {
+            throw new IllegalStateException(
+                    "DataSource is not set. queryByJdbc requires PersistenceService to be constructed with a DataSource or setDataSource().");
+        }
         String content = null;
         InputStream inputStream = null;
         ByteArrayOutputStream infoStreams = null;
@@ -1101,7 +1122,7 @@ public class PersistenceService implements QueryService {
         }
     }
 
-        @Override
+    @Override
     public <T> void deleteAll(List<T> objects) {
         Session session = null;
         Transaction txn = null;

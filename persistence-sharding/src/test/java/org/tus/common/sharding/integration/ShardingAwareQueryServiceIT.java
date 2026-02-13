@@ -80,18 +80,51 @@ public class ShardingAwareQueryServiceIT {
         int shardingCount = 32;
         int databaseCount = 2;
         int tableCount = 16;
-        
+
         ShardingAwareQueryService.ShardInfo shardInfo = shardingAwareQueryService.getShardInfo(
-            userId, 
-            shardingCount, 
-            databaseCount, 
+            userId,
+            shardingCount,
+            databaseCount,
             tableCount
         );
-        
+
         assertNotNull(shardInfo);
         assertTrue(shardInfo.getDatabaseIndex() >= 0 && shardInfo.getDatabaseIndex() < databaseCount);
         assertTrue(shardInfo.getTableIndex() >= 0 && shardInfo.getTableIndex() < tableCount);
         assertEquals("ds_" + shardInfo.getDatabaseIndex(), shardInfo.getDatabaseName());
+    }
+
+    @Test
+    void testGetShardInfoWithLogicalTableName() {
+        long userId = 1001L;
+        int shardingCount = 32;
+        int databaseCount = 2;
+        int tableCount = 16;
+        String logicalTableName = "t_order";
+
+        ShardingAwareQueryService.ShardInfo shardInfo = shardingAwareQueryService.getShardInfo(
+            userId, shardingCount, databaseCount, tableCount, logicalTableName
+        );
+
+        assertNotNull(shardInfo);
+        assertTrue(shardInfo.getTableName().startsWith(logicalTableName + "_"));
+        assertEquals(shardInfo.getTableIndex(), Integer.parseInt(shardInfo.getTableName().substring(logicalTableName.length() + 1)));
+    }
+
+    @Test
+    void testFindObjectByIdWithShardingKeyWithColumnName() {
+        TestShardedEntity entity = createTestEntity(testUserId1, "Test Entity Column");
+
+        TestShardedEntity found = shardingAwareQueryService.findObjectByIdWithShardingKey(
+            TestShardedEntity.class,
+            entity.getId(),
+            "userId",
+            testUserId1
+        );
+
+        assertNotNull(found);
+        assertEquals(entity.getId(), found.getId());
+        assertEquals(testUserId1, found.getUserId());
     }
     
     @Test

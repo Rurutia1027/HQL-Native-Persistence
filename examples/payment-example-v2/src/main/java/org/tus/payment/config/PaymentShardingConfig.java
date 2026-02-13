@@ -31,7 +31,6 @@ public class PaymentShardingConfig {
     @Value("${shardingsphere.config.file:classpath:shardingsphere-config.yaml}")
     private String configFile;
 
-    // PostgreSQL Hibernate dialect
     @Value("${hibernate.dialect:org.hibernate.dialect.PostgreSQLDialect}")
     private String hibernateDialect;
 
@@ -46,6 +45,18 @@ public class PaymentShardingConfig {
 
     @Value("${hibernate.packagesToScan:org.tus.payment.entity}")
     private String packagesToScan;
+
+    @Value("${hibernate.use_sql_comments:true}")
+    private String useSqlComments;
+
+    @Value("${hibernate.jdbc.batch_size:50}")
+    private String jdbcBatchSize;
+
+    @Value("${hibernate.order_inserts:true}")
+    private String orderInserts;
+
+    @Value("${hibernate.order_updates:true}")
+    private String orderUpdates;
 
     /**
      * Creates ShardingSphere data source from YAML configuration.
@@ -84,14 +95,14 @@ public class PaymentShardingConfig {
         factory.setPackagesToScan(packagesToScan.split(","));
 
         Properties props = new Properties();
-        props.put("hibernate.dialect", hibernateDialect); // PostgreSQL dialect
+        props.put("hibernate.dialect", hibernateDialect);
         props.put("hibernate.hbm2ddl.auto", hbm2ddlAuto);
         props.put("hibernate.show_sql", showSql);
         props.put("hibernate.format_sql", formatSql);
-        props.put("hibernate.use_sql_comments", "true");
-        props.put("hibernate.jdbc.batch_size", "50");
-        props.put("hibernate.order_inserts", "true");
-        props.put("hibernate.order_updates", "true");
+        props.put("hibernate.use_sql_comments", useSqlComments);
+        props.put("hibernate.jdbc.batch_size", jdbcBatchSize);
+        props.put("hibernate.order_inserts", orderInserts);
+        props.put("hibernate.order_updates", orderUpdates);
         factory.setHibernateProperties(props);
 
         return factory;
