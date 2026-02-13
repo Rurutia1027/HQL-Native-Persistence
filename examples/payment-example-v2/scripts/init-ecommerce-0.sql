@@ -138,3 +138,11 @@ CREATE TABLE IF NOT EXISTS t_order_items_15
 (
     LIKE t_order_items_template INCLUDING ALL
 );
+
+-- =========================
+-- Users (broadcast table: same on all DBs)
+-- =========================
+CREATE TABLE IF NOT EXISTS t_users
+(
+    LIKE t_users_template INCLUDING ALL
+);

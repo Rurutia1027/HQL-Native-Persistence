@@ -289,8 +289,35 @@ CREATE INDEX idx_account_tx_deleted ON t_account_transactions_template (deleted)
 CREATE INDEX idx_account_tx_user_type_date
     ON t_account_transactions_template (user_id, transaction_type, created_date);
 
+-- =========================
+-- Users (broadcast: same table on all DBs, no sharding)
+-- =========================
+CREATE TABLE IF NOT EXISTS t_users_template
+(
+    uuid             VARCHAR(64) PRIMARY KEY,
+    version_number   BIGINT                  DEFAULT 1,
+    created_date     TIMESTAMP               DEFAULT CURRENT_TIMESTAMP,
+    modified_date    TIMESTAMP               DEFAULT CURRENT_TIMESTAMP,
+    deleted          VARCHAR(64),
 
+    user_id          BIGINT         NOT NULL UNIQUE,
+    username         VARCHAR(64)    NOT NULL,
+    email            VARCHAR(128),
+    phone            VARCHAR(32),
+    real_name        VARCHAR(64),
+    id_card          VARCHAR(32),
+    account_status   SMALLINT,
+    account_balance  NUMERIC(18, 2),
+    credit_score     SMALLINT,
+    avatar_url       VARCHAR(512),
+    gender           SMALLINT,
+    birthday         DATE,
+    address          TEXT
+);
 
+CREATE INDEX idx_users_user_id ON t_users_template (user_id);
+CREATE INDEX idx_users_username ON t_users_template (username);
+CREATE INDEX idx_users_deleted ON t_users_template (deleted);
 
 
 

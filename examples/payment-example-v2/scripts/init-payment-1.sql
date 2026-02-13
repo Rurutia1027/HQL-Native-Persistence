@@ -318,3 +318,11 @@ CREATE TABLE IF NOT EXISTS t_account_transactions_31
 (
     LIKE t_account_transactions_template INCLUDING ALL
 );
+
+-- =========================
+-- Users (broadcast table: same on all DBs)
+-- =========================
+CREATE TABLE IF NOT EXISTS t_users
+(
+    LIKE t_users_template INCLUDING ALL
+);

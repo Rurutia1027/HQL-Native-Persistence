@@ -1,320 +1,150 @@
 -- =====================================
--- Initialize Payment Database Shard 0
+-- Initialize E-Commerce Database Shard 1
+-- Same structure as shard 0
 -- =====================================
 
 -- =========================
--- Payments (16 shards)
+-- Orders Shards (16 tables)
 -- =========================
 
-CREATE TABLE IF NOT EXISTS t_payments_0
+CREATE TABLE IF NOT EXISTS t_orders_0
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_1
+CREATE TABLE IF NOT EXISTS t_orders_1
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_2
+CREATE TABLE IF NOT EXISTS t_orders_2
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_3
+CREATE TABLE IF NOT EXISTS t_orders_3
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_4
+CREATE TABLE IF NOT EXISTS t_orders_4
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_5
+CREATE TABLE IF NOT EXISTS t_orders_5
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_6
+CREATE TABLE IF NOT EXISTS t_orders_6
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_7
+CREATE TABLE IF NOT EXISTS t_orders_7
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_8
+CREATE TABLE IF NOT EXISTS t_orders_8
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_9
+CREATE TABLE IF NOT EXISTS t_orders_9
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_10
+CREATE TABLE IF NOT EXISTS t_orders_10
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_11
+CREATE TABLE IF NOT EXISTS t_orders_11
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_12
+CREATE TABLE IF NOT EXISTS t_orders_12
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_13
+CREATE TABLE IF NOT EXISTS t_orders_13
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_14
+CREATE TABLE IF NOT EXISTS t_orders_14
 (
-    LIKE t_payments_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_payments_15
+CREATE TABLE IF NOT EXISTS t_orders_15
 (
-    LIKE t_payments_template INCLUDING ALL
-);
-
--- =========================
--- Payment Records (16 shards)
--- =========================
-
-CREATE TABLE IF NOT EXISTS t_payment_records_0
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_1
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_2
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_3
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_4
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_5
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_6
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_7
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_8
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_9
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_10
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_11
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_12
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_13
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_14
-(
-    LIKE t_payment_records_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_payment_records_15
-(
-    LIKE t_payment_records_template INCLUDING ALL
+    LIKE t_orders_template INCLUDING ALL
 );
 
--- =========================
--- Refunds (8 shards)
--- =========================
+-- =============================
+-- Order Items Shards (16 tables)
+-- =============================
 
-CREATE TABLE IF NOT EXISTS t_refunds_0
+CREATE TABLE IF NOT EXISTS t_order_items_0
 (
-    LIKE t_refunds_template INCLUDING ALL
+    LIKE t_order_items_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_refunds_1
+CREATE TABLE IF NOT EXISTS t_order_items_1
 (
-    LIKE t_refunds_template INCLUDING ALL
+    LIKE t_order_items_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_refunds_2
+CREATE TABLE IF NOT EXISTS t_order_items_2
 (
-    LIKE t_refunds_template INCLUDING ALL
+    LIKE t_order_items_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_refunds_3
+CREATE TABLE IF NOT EXISTS t_order_items_3
 (
-    LIKE t_refunds_template INCLUDING ALL
+    LIKE t_order_items_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_refunds_4
+CREATE TABLE IF NOT EXISTS t_order_items_4
 (
-    LIKE t_refunds_template INCLUDING ALL
+    LIKE t_order_items_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_refunds_5
+CREATE TABLE IF NOT EXISTS t_order_items_5
 (
-    LIKE t_refunds_template INCLUDING ALL
+    LIKE t_order_items_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_refunds_6
+CREATE TABLE IF NOT EXISTS t_order_items_6
 (
-    LIKE t_refunds_template INCLUDING ALL
+    LIKE t_order_items_template INCLUDING ALL
 );
-CREATE TABLE IF NOT EXISTS t_refunds_7
+CREATE TABLE IF NOT EXISTS t_order_items_7
 (
-    LIKE t_refunds_template INCLUDING ALL
+    LIKE t_order_items_template INCLUDING ALL
+);
+CREATE TABLE IF NOT EXISTS t_order_items_8
+(
+    LIKE t_order_items_template INCLUDING ALL
+);
+CREATE TABLE IF NOT EXISTS t_order_items_9
+(
+    LIKE t_order_items_template INCLUDING ALL
+);
+CREATE TABLE IF NOT EXISTS t_order_items_10
+(
+    LIKE t_order_items_template INCLUDING ALL
+);
+CREATE TABLE IF NOT EXISTS t_order_items_11
+(
+    LIKE t_order_items_template INCLUDING ALL
+);
+CREATE TABLE IF NOT EXISTS t_order_items_12
+(
+    LIKE t_order_items_template INCLUDING ALL
+);
+CREATE TABLE IF NOT EXISTS t_order_items_13
+(
+    LIKE t_order_items_template INCLUDING ALL
+);
+CREATE TABLE IF NOT EXISTS t_order_items_14
+(
+    LIKE t_order_items_template INCLUDING ALL
+);
+CREATE TABLE IF NOT EXISTS t_order_items_15
+(
+    LIKE t_order_items_template INCLUDING ALL
 );
 
 -- =========================
--- Account Balance (single table)
+-- Users (broadcast table: same on all DBs)
 -- =========================
-
-CREATE TABLE IF NOT EXISTS t_account_balance
+CREATE TABLE IF NOT EXISTS t_users
 (
-    LIKE t_account_balance_template INCLUDING ALL
-);
-
--- =========================
--- Account Transactions (32 shards)
--- =========================
-
-CREATE TABLE IF NOT EXISTS t_account_transactions_0
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_1
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_2
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_3
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_4
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_5
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_6
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_7
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_8
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_9
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_10
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_11
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_12
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_13
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_14
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_15
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_16
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_17
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_18
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_19
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_20
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_21
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_22
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_23
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_24
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_25
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_26
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_27
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_28
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_29
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_30
-(
-    LIKE t_account_transactions_template INCLUDING ALL
-);
-CREATE TABLE IF NOT EXISTS t_account_transactions_31
-(
-    LIKE t_account_transactions_template INCLUDING ALL
+    LIKE t_users_template INCLUDING ALL
 );
