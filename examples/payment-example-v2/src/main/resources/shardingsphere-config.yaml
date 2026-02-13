@@ -1,3 +1,18 @@
+# ShardingSphere Configuration for Payment Example V2 (PostgreSQL)
+# This is the canonical config for this example. The one under persistence-sharding is for reference only.
+# Aligned with scripts/ (init-ecommerce-0|1.sql, init-payment-0|1.sql) and entities.
+#
+# ⚠️ All data sources MUST use the same database type (PostgreSQL).
+#
+# Structure:
+# - dataSources: 4 instances (Docker Compose service names), HikariCP, PostgreSQL driver.
+# - rules: 7 sharded tables each with (1) actualDataNodes = data source + table range,
+#   (2) databaseStrategy = shardingColumn + algorithm name → DB layer,
+#   (3) tableStrategy = shardingColumn + algorithm name → table layer.
+# - shardingAlgorithms: algorithm names map to CLASS_BASED implementation classes
+#   (org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm, TableHashModShardingAlgorithm).
+# - t_users: broadcast (no sharding).
+
 dataSources:
   ds_ecommerce_0:
     dataSourceClassName: com.zaxxer.hikari.HikariDataSource
@@ -46,3 +61,172 @@ dataSources:
     connectionTimeout: 30000
     idleTimeout: 600000
     maxLifetime: 1800000
+
+rules:
+  - !SHARDING
+    tables:
+      # ----- E-Commerce (scripts: init-ecommerce-0/1.sql) -----
+      t_orders:
+        actualDataNodes: ds_ecommerce_0.t_orders_${0..15},ds_ecommerce_1.t_orders_${0..15}
+        databaseStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: orders_database_mod
+        tableStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: orders_table_mod
+
+      t_order_items:
+        actualDataNodes: ds_ecommerce_0.t_order_items_${0..15},ds_ecommerce_1.t_order_items_${0..15}
+        databaseStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: order_items_database_mod
+        tableStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: order_items_table_mod
+
+      # ----- Payment (scripts: init-payment-0/1.sql) -----
+      # Entity @Table(name = "t_payment"); physical tables are t_payments_0..15
+      t_payment:
+        actualDataNodes: ds_payment_0.t_payments_${0..15},ds_payment_1.t_payments_${0..15}
+        databaseStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: payment_database_mod
+        tableStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: payment_table_mod
+
+      t_payment_records:
+        actualDataNodes: ds_payment_0.t_payment_records_${0..15},ds_payment_1.t_payment_records_${0..15}
+        databaseStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: payment_records_database_mod
+        tableStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: payment_records_table_mod
+
+      t_refunds:
+        actualDataNodes: ds_payment_0.t_refunds_${0..7},ds_payment_1.t_refunds_${0..7}
+        databaseStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: refunds_database_mod
+        tableStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: refunds_table_mod
+
+      t_account_balance:
+        actualDataNodes: ds_payment_0.t_account_balance,ds_payment_1.t_account_balance
+        databaseStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: account_balance_database_mod
+        tableStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: account_balance_table_mod
+
+      t_account_transactions:
+        actualDataNodes: ds_payment_0.t_account_transactions_${0..31},ds_payment_1.t_account_transactions_${0..31}
+        databaseStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: account_tx_database_mod
+        tableStrategy:
+          standard:
+            shardingColumn: user_id
+            shardingAlgorithmName: account_tx_table_mod
+
+    shardingAlgorithms:
+      # E-Commerce: 2 DBs × 16 tables = 32 total
+      orders_database_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
+          sharding-count: "32"
+      orders_table_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
+
+      order_items_database_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
+          sharding-count: "32"
+      order_items_table_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
+
+      # Payment: 2 DBs × 16 tables = 32
+      payment_database_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
+          sharding-count: "32"
+      payment_table_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
+
+      payment_records_database_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
+          sharding-count: "32"
+      payment_records_table_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
+
+      # Refunds: 2 DBs × 8 tables = 16
+      refunds_database_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
+          sharding-count: "16"
+      refunds_table_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
+
+      # Account balance: 2 DBs × 1 table
+      account_balance_database_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
+          sharding-count: "2"
+      account_balance_table_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
+
+      # Account transactions: 2 DBs × 32 tables = 64
+      account_tx_database_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.DBHashModShardingAlgorithm
+          sharding-count: "64"
+      account_tx_table_mod:
+        type: CLASS_BASED
+        props:
+          algorithmClassName: org.tus.common.sharding.algorithm.TableHashModShardingAlgorithm
+
+  # Broadcast table: t_users exists on every data source (same structure, same name).
+  # No sharding; writes are sent to all DBs so each has a copy. Not a single "central" DB.
+  - !BROADCAST
+    tables:
+      - t_users
+
+props:
+  sql-show: true
+  sql-simple: true
