@@ -286,10 +286,3 @@ payments, refunds, distributions), and error rate.
 
 This keeps each layer’s metrics focused and avoids duplication while allowing Grafana and tracing to correlate behavior
 across the full stack.
-
-
-
-
-
-
-

@@ -1,0 +1,22 @@
+# Prometheus config for payment-example-v2 observability stack.
+# Scrapes the Spring Boot app (run on host or same network) at /actuator/prometheus.
+
+global:
+  scrape_interval: 5s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # Payment app metrics (Micrometer /actuator/prometheus)
+  # When app runs on host: host.docker.internal:8080
+  # When app runs in Docker on same network: use service name and port instead.
+  - job_name: 'payment-app'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 10s
+    static_configs:
+      - targets: [ 'host.docker.internal:8080' ]
+        labels:
+          app: 'payment-example-v2'
+          layer: 'application'
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: [ 'localhost:8080' ]

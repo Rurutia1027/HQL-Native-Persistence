@@ -5,7 +5,6 @@ import org.hibernate.query.Order;
 import org.springframework.stereotype.Service;
 import org.tus.common.domain.dao.HqlQueryBuilder;
 import org.tus.common.domain.persistence.QueryService;
-import org.tus.common.sharding.service.ShardingAwareQueryService;
 import org.tus.payment.analytics.BusinessMetrics;
 import org.tus.payment.entity.Payment;
 import org.tus.payment.entity.Refund;
@@ -30,8 +29,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class BusinessAnalyticsService {
     private final QueryService queryService;
-
-    private static ShardingAwareQueryService shardingAwareQueryService;
 
     /**
      * Get overall business metrics across all shards.
