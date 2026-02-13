@@ -164,4 +164,29 @@ OrderWithPayment result = new OrderWithPayment(order, payment);
 ### Asynchronous Processing
 
 - Use scheduled jobs for metrics computation
-- Use message queues for cross-module synchronization 
+- Use message queues for cross-module synchronization
+
+---
+
+## Observability Stack (Docker)
+
+The `docker-compose.yml` includes an observability stack for metrics, dashboards, and tracing:
+
+| Service        | Port                                      | Purpose                                                                                                             |
+|----------------|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| **Prometheus** | 9090                                      | Scrapes app metrics from `/actuator/prometheus` (target: `host.docker.internal:8080` when the app runs on the host) |
+| **Grafana**    | 3000                                      | Dashboards; Prometheus is provisioned as default datasource (login: `admin` / `admin`)                              |
+| **Jaeger**     | 16686 (UI), 9411 (Zipkin), 14268 (Jaeger) | Trace backend; UI at 16686; accepts Zipkin and Jaeger spans                                                         |
+
+**Run the stack** (with or without Postgres):
+
+```bash
+docker compose up -d
+```
+
+- **Prometheus:** http://localhost:9090
+- **Grafana:** http://localhost:3000 (admin / admin)
+- **Jaeger UI:** http://localhost:16686
+
+Ensure the Spring Boot app exposes `/actuator/prometheus` and runs on port 8080 (or update `prometheus/prometheus.yml`
+and the app port). Design details: see `docs/OBSERVABILITY-DESIGN.md`.
