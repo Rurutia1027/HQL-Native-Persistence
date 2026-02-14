@@ -1,5 +1,6 @@
 package org.tus.common.sharding.service;
 
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.tus.common.domain.persistence.NamedArtifact;
 import org.tus.common.domain.persistence.PersistedObject;
@@ -20,6 +21,7 @@ import java.util.Map;
  * sharding-aware operations. All sharded queries include the sharding value
  * in the HQL so ShardingSphere can route to the correct shard(s).
  */
+@RequiredArgsConstructor
 public class ShardingAwareQueryServiceImpl implements ShardingAwareQueryService {
 
     /**
@@ -29,9 +31,6 @@ public class ShardingAwareQueryServiceImpl implements ShardingAwareQueryService 
 
     private final QueryService delegate;
 
-    public ShardingAwareQueryServiceImpl(QueryService delegate) {
-        this.delegate = delegate;
-    }
 
     @Override
     public <T> T findObjectByIdWithShardingKey(Class<T> clazz, String id, Long shardingKey) {
