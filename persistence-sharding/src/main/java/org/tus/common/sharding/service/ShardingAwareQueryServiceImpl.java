@@ -1,67 +1,99 @@
 package org.tus.common.sharding.service;
 
+import lombok.RequiredArgsConstructor;
+import org.hibernate.Session;
+import org.tus.common.domain.persistence.NamedArtifact;
+import org.tus.common.domain.persistence.PersistedObject;
+import org.tus.common.domain.persistence.QueryPostProcessor;
 import org.tus.common.domain.persistence.QueryService;
+import org.tus.common.domain.persistence.SimplePersistedObject;
+import org.tus.common.domain.persistence.UniqueNamedArtifact;
 import org.tus.common.sharding.util.ShardingUtil;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Implementation of ShardingAwareQueryService.
- * 
+ *
  * This implementation extends the base QueryService functionality with
- * sharding-aware operations. Most operations delegate to the base QueryService,
- * as ShardingSphere handles the routing transparently.
+ * sharding-aware operations. All sharded queries include the sharding value
+ * in the HQL so ShardingSphere can route to the correct shard(s).
  */
+@RequiredArgsConstructor
 public class ShardingAwareQueryServiceImpl implements ShardingAwareQueryService {
+
+    /**
+     * Parameter name used when appending sharding key IN clause in queryWithShardingKeys.
+     */
+    public static final String SHARDING_KEYS_PARAM = "__shardingKeys";
 
     private final QueryService delegate;
 
-    public ShardingAwareQueryServiceImpl(QueryService delegate) {
-        this.delegate = delegate;
-    }
 
     @Override
     public <T> T findObjectByIdWithShardingKey(Class<T> clazz, String id, Long shardingKey) {
-        // ShardingSphere will automatically route based on sharding key in WHERE clause
-        // We need to include the sharding key in the query
-        String hql = "from " + clazz.getName() + " where id = :id";
-        Map<String, Object> params = Map.of("id", id);
-        
-        // If the entity has a sharding key field, include it in the query
-        // This ensures ShardingSphere routes correctly
-        // Note: The actual routing is handled by ShardingSphere based on table configuration
+        return findObjectByIdWithShardingKey(clazz, id, "userId", shardingKey);
+    }
+
+    @Override
+    public <T> T findObjectByIdWithShardingKey(Class<T> clazz, String id, String shardingKeyPropertyName, Object shardingKeyValue) {
+        if (shardingKeyPropertyName == null || shardingKeyPropertyName.isBlank()) {
+            throw new IllegalArgumentException("shardingKeyPropertyName must not be null or blank");
+        }
+        if (shardingKeyValue == null) {
+            throw new IllegalArgumentException("shardingKeyValue must not be null for shard routing");
+        }
+        String hql = "from " + clazz.getName() + " where id = :id and " + shardingKeyPropertyName + " = :shardingKeyValue";
+        Map<String, Object> params = new HashMap<>();
+        params.put("id", id);
+        params.put("shardingKeyValue", shardingKeyValue);
         Object result = delegate.querySingle(hql, params, null);
         return result != null ? clazz.cast(result) : null;
     }
 
     @Override
     public List queryWithShardingKeys(String hql, Map<String, Object> namedParameters, List<Long> shardingKeys) {
-        // ShardingSphere automatically handles IN queries across shards
-        // Just execute the query normally - ShardingSphere will route correctly
         if (shardingKeys != null && !shardingKeys.isEmpty()) {
-            // Add sharding keys to parameters if needed
-            Map<String, Object> params = new java.util.HashMap<>(namedParameters);
+            Map<String, Object> params = namedParameters == null ? new HashMap<>() : new HashMap<>(namedParameters);
             params.put("shardingKeys", shardingKeys);
             return delegate.query(hql, params);
         }
-        return delegate.query(hql, namedParameters);
+        return delegate.query(hql, namedParameters != null ? namedParameters : Map.of());
+    }
+
+    @Override
+    public List queryWithShardingKeys(String hql, Map<String, Object> namedParameters, String shardingKeyPropertyName, List<?> shardingKeys) {
+        if (shardingKeyPropertyName == null || shardingKeyPropertyName.isBlank()) {
+            throw new IllegalArgumentException("shardingKeyPropertyName must not be null or blank");
+        }
+        Map<String, Object> params = namedParameters == null ? new HashMap<>() : new HashMap<>(namedParameters);
+        if (shardingKeys != null && !shardingKeys.isEmpty()) {
+            String condition = shardingKeyPropertyName + " IN (:" + SHARDING_KEYS_PARAM + ")";
+            String normalizedHql = hql.trim();
+            boolean hasWhere = normalizedHql.toUpperCase().contains(" WHERE ");
+            String fullHql = hasWhere ? (normalizedHql + " AND " + condition) : (normalizedHql + " WHERE " + condition);
+            params.put(SHARDING_KEYS_PARAM, shardingKeys);
+            return delegate.query(fullHql, params);
+        }
+        return delegate.query(hql, params);
     }
 
     @Override
     public ShardInfo getShardInfo(Long shardingKey, int shardingCount, int databaseCount, int tableCount) {
         int dbIndex = ShardingUtil.calculateDatabaseShard(shardingKey, shardingCount, databaseCount);
         int tableIndex = ShardingUtil.calculateTableShard(shardingKey, tableCount);
-        
+
         String dbName = "ds_" + dbIndex;
         String tableName = "t_" + tableIndex; // Base name should be provided
-        
+
         return new ShardInfo(dbIndex, tableIndex, dbName, tableName);
     }
 
     // Delegate all QueryService methods to the underlying service
     @Override
-    public org.hibernate.Session openSession() {
+    public Session openSession() {
         return delegate.openSession();
     }
 
@@ -76,7 +108,7 @@ public class ShardingAwareQueryServiceImpl implements ShardingAwareQueryService 
     }
 
     @Override
-    public List query(String hql, org.tus.common.domain.persistence.QueryPostProcessor post, Object... params) {
+    public List query(String hql, QueryPostProcessor post, Object... params) {
         return delegate.query(hql, post, params);
     }
 
@@ -86,7 +118,7 @@ public class ShardingAwareQueryServiceImpl implements ShardingAwareQueryService 
     }
 
     @Override
-    public List query(String hql, Map<String, Object> namedParams, org.tus.common.domain.persistence.QueryPostProcessor post) {
+    public List query(String hql, Map<String, Object> namedParams, QueryPostProcessor post) {
         return delegate.query(hql, namedParams, post);
     }
 
@@ -96,13 +128,13 @@ public class ShardingAwareQueryServiceImpl implements ShardingAwareQueryService 
     }
 
     @Override
-    public List pagedQuery(String hql, Map<String, Object> namedParameters, Integer pageStart, Integer pageSize, 
-                           org.tus.common.domain.persistence.QueryPostProcessor post) {
+    public List pagedQuery(String hql, Map<String, Object> namedParameters, Integer pageStart, Integer pageSize,
+                           QueryPostProcessor post) {
         return delegate.pagedQuery(hql, namedParameters, pageStart, pageSize, post);
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.SimplePersistedObject> T save(T item) {
+    public <T extends SimplePersistedObject> T save(T item) {
         return delegate.save(item);
     }
 
@@ -127,7 +159,7 @@ public class ShardingAwareQueryServiceImpl implements ShardingAwareQueryService 
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.SimplePersistedObject> List<T> saveAll(List<T> itemList) {
+    public <T extends SimplePersistedObject> List<T> saveAll(List<T> itemList) {
         return delegate.saveAll(itemList);
     }
 
@@ -137,12 +169,12 @@ public class ShardingAwareQueryServiceImpl implements ShardingAwareQueryService 
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.SimplePersistedObject> T delete(T item) {
+    public <T extends SimplePersistedObject> T delete(T item) {
         return delegate.delete(item);
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.SimplePersistedObject> List<T> mergeAll(List<T> itemList) {
+    public <T extends SimplePersistedObject> List<T> mergeAll(List<T> itemList) {
         return delegate.mergeAll(itemList);
     }
 
@@ -167,51 +199,49 @@ public class ShardingAwareQueryServiceImpl implements ShardingAwareQueryService 
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.UniqueNamedArtifact> T findObjectByName(Class<T> clazz, String name) {
+    public <T extends UniqueNamedArtifact> T findObjectByName(Class<T> clazz, String name) {
         return delegate.findObjectByName(clazz, name);
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.SimplePersistedObject> T findSimpleObjectById(Class<T> clazz, String objId, String typeName) {
+    public <T extends SimplePersistedObject> T findSimpleObjectById(Class<T> clazz, String objId, String typeName) {
         return delegate.findSimpleObjectById(clazz, objId, typeName);
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.SimplePersistedObject> T findSimpleObjectById(Class<T> clazz, String objId) {
+    public <T extends SimplePersistedObject> T findSimpleObjectById(Class<T> clazz, String objId) {
         return delegate.findSimpleObjectById(clazz, objId);
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.UniqueNamedArtifact> T findObjectByName(Class<T> clazz, String name, 
-                                                                                                org.tus.common.domain.persistence.QueryPostProcessor post) {
+    public <T extends UniqueNamedArtifact> T findObjectByName(Class<T> clazz, String name,
+                                                              QueryPostProcessor post) {
         return delegate.findObjectByName(clazz, name, post);
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.PersistedObject> T findObjectById(Class<T> clazz, String id) {
+    public <T extends PersistedObject> T findObjectById(Class<T> clazz, String id) {
         return delegate.findObjectById(clazz, id);
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.PersistedObject> T findObjectById(Class<T> clazz, String id, 
-                                                                                          org.tus.common.domain.persistence.QueryPostProcessor post) {
+    public <T extends PersistedObject> T findObjectById(Class<T> clazz, String id, QueryPostProcessor post) {
         return delegate.findObjectById(clazz, id, post);
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.PersistedObject> T findObjectByIdOrName(Class<T> clazz, String idOrName) {
+    public <T extends PersistedObject> T findObjectByIdOrName(Class<T> clazz, String idOrName) {
         return delegate.findObjectByIdOrName(clazz, idOrName);
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.PersistedObject> T findObjectByIdOrName(Class<T> clazz, String idName, 
-                                                                                               org.tus.common.domain.persistence.QueryPostProcessor post) {
+    public <T extends PersistedObject> T findObjectByIdOrName(Class<T> clazz, String idName, QueryPostProcessor post) {
         return delegate.findObjectByIdOrName(clazz, idName, post);
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.PersistedObject> List<T> findObjectsByAndingParams(Class<T> tClass, 
-                                                                                                            Map<String, String> params) {
+    public <T extends PersistedObject> List<T> findObjectsByAndingParams(Class<T> tClass,
+                                                                         Map<String, String> params) {
         return delegate.findObjectsByAndingParams(tClass, params);
     }
 
@@ -236,13 +266,12 @@ public class ShardingAwareQueryServiceImpl implements ShardingAwareQueryService 
     }
 
     @Override
-    public Object querySingle(String hql, Map<String, Object> namedParameters, 
-                             org.tus.common.domain.persistence.QueryPostProcessor post) {
+    public Object querySingle(String hql, Map<String, Object> namedParameters, QueryPostProcessor post) {
         return delegate.querySingle(hql, namedParameters, post);
     }
 
     @Override
-    public <T extends org.tus.common.domain.persistence.NamedArtifact> T findOrSave(String hql, Map<String, Object> namedParameters, T item) {
+    public <T extends NamedArtifact> T findOrSave(String hql, Map<String, Object> namedParameters, T item) {
         return delegate.findOrSave(hql, namedParameters, item);
     }
 }
