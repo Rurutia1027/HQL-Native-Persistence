@@ -88,6 +88,39 @@ public class PersistenceConfig {
 }
 ```
 
+#### Using MySQL
+
+To use MySQL as the data source, add the MySQL JDBC driver and configure the dialect:
+
+**Maven dependency (in your application):**
+```xml
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+    <scope>runtime</scope>
+</dependency>
+```
+
+**Configuration:**
+```java
+@Bean
+@Primary
+public DataSource dataSource() {
+    DriverManagerDataSource ds = new DriverManagerDataSource();
+    ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
+    ds.setUrl("jdbc:mysql://localhost:3306/mydb?useUnicode=true&characterEncoding=utf8");
+    ds.setUsername("user");
+    ds.setPassword("password");
+    return ds;
+}
+
+// In sessionFactory hibernate properties:
+props.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");  // or MySQL8Dialect for MySQL 8+
+```
+
+To run integration tests against MySQL (Testcontainers), use:  
+`mvn test -DexcludedGroups=` (runs all tests including MySQL). By default, MySQL container tests are excluded for faster CI.
+
 ### 3. Define Entities 
 
 ```java
