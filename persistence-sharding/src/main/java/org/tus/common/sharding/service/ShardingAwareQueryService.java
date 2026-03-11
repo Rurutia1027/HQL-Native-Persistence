@@ -11,12 +11,12 @@ import java.util.function.Function;
 
 /**
  * Sharding-aware facade on top of the core QueryService.
- * <p>
+ *
  * This interface is intentionally small and focused on the most common access patterns:
  * - find by id
  * - list query
  * - paged query
- * <p>
+ *
  * All operations take a ShardingContext so that callers are forced to think about
  * sharding/tenant keys when accessing sharded entities.
  */
