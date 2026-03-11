@@ -82,14 +82,14 @@ public class UserService {
 
 ## Database Support 
 
-### Supported Databases
+### Supported Databases (Single Type per Deployment)
 
 This solution supports multiple relational databases through Hibernate's dialect system. **However, you must use the same database type across all shards in a single deployment.**
 
 | Database | Status | Notes |
 |----------|--------|-------|
-| **MySQL** | ✅ Fully Supported | Production-ready, well-tested |
-| **PostgreSQL** | ✅ Fully Supported | Excellent HQL support |
+| **MySQL / TiDB** | ✅ Fully Supported | Production-ready, well-tested; TiDB is MySQL-compatible |
+| **PostgreSQL** | ✅ Supported | Excellent HQL support (separate deployment profile) |
 | **Oracle** | ✅ Supported | Requires Oracle dialect |
 | **SQL Server** | ✅ Supported | Microsoft SQL Server support |
 | **H2** | ✅ Supported | Great for testing |

@@ -56,8 +56,9 @@ public class PersistenceConfig {
     @Primary
     public DataSource dataSource() {
         DriverManagerDataSource ds = new DriverManagerDataSource();
-        ds.setDriverClassName("org.postgresql.Driver");
-        ds.setUrl("jdbc:postgresql://localhost:5432/mydb");
+        // Example with MySQL/TiDB; adjust URL/credentials as needed
+        ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        ds.setUrl("jdbc:mysql://localhost:4000/mydb?useUnicode=true&characterEncoding=utf8");
         ds.setUsername("user");
         ds.setPassword("password");
         return ds;
@@ -70,7 +71,8 @@ public class PersistenceConfig {
         factory.setPackagesToScan("com.example.entity");
         
         Properties props = new Properties();
-        props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        // Default to MySQLDialect which is compatible with TiDB
+        props.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
         props.put("hibernate.hbm2ddl.auto", "none");
         factory.setHibernateProperties(props);
         return factory;

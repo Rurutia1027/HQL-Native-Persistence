@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: payment-example
+
+  # DataSource Configuration (TiDB/MySQL compatible)
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # For TiDB, point this URL to your TiDB server; for local MySQL, adjust host/db accordingly.
+    url: jdbc:mysql://localhost:4000/payment_db
+    username: root
+    password: root
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      pool-name: PaymentHikariPool
+
+  # JPA/Hibernate Configuration
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+        hbm2ddl:
+          auto: update
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+# Application Configuration
+app:
+  # Hibernate Configuration
+  hibernate:
+    packages-to-scan: org.tus.payment.entity
+    show-sql: false
+    format-sql: true
+
+  # Logging Configuration
+  logging:
+    level:
+      org.tus.payment: DEBUG
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type.descriptor.sql.BasicBinder: TRACE

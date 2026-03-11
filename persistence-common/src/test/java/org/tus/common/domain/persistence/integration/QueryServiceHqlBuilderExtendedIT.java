@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.tus.common.domain.dao.HqlQueryBuilder;
 import org.tus.common.domain.persistence.QueryService;
-import org.tus.common.domain.persistence.integration.config.PersistenceTestContainerDBConfig;
+import org.tus.common.domain.persistence.integration.config.PersistenceTestContainerMySQLConfig;
 import org.tus.common.domain.persistence.integration.entity.TestPersistedEntity;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
-@SpringJUnitConfig(classes = PersistenceTestContainerDBConfig.class)
+@SpringJUnitConfig(classes = PersistenceTestContainerMySQLConfig.class)
 public class QueryServiceHqlBuilderExtendedIT {
 
     @Autowired
