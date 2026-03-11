@@ -2,16 +2,16 @@
 
 [![Java](https://img.shields.io/badge/Java-17+-orange.svg)](https://www.oracle.com/java/)
 [![Hibernate](https://img.shields.io/badge/Hibernate-6.x-blue.svg)](https://hibernate.org/)
-[![ShardingSphere](https://img.shields.io/badge/ShardingSphere-5.4+-green.svg)](https://shardingsphere.apache.org/)
+[![TiDB](https://img.shields.io/badge/TiDB-Native%20Sharding-green.svg)](https://docs.pingcap.com/tidb/stable)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A lightweight, flexible persistence layer built on Hibernate/HQL that provides an alternative to Spring Data JPA and MyBatis. Features transparent database sharding, type-safe query building, and full control over database operations. 
+A lightweight, flexible persistence layer built on Hibernate/HQL that provides an alternative to Spring Data JPA and MyBatis. Features **TiDB-native sharding** (partition-aware HQL), type-safe query building, and full control over database operations.
 
 ## Features 
 - **HQL-Native**: Pure Hibernate Query Language (HQL) - No MyBatis, no Spring Data JPA 
 - **Type-Safe Query Building**: Fluent API for building complex queries programmatically 
-- **Transparent Sharding**: Apache ShardSphere integration for database/table sharding 
-- **Multi-RDBMS Support**: Works with MySQL, PostgreSQL, Oracle, SQL Server, and more 
+- **TiDB-Native Sharding**: Single DataSource, partition keys in DDL + `ShardingContext` / `@ShardingKey` in code; no application-side routing 
+- **Multi-RDBMS Support**: Works with MySQL, TiDB, PostgreSQL, Oracle, SQL Server, and more 
 - **Cloud-Native Ready**: Designed for containerized, scalable architectures
 - **Built-in Soft Delete**: Automatic filtering of deleted entities 
 - **Entity Lifecycle Hooks**: Callback methods for entity operations 
@@ -75,9 +75,12 @@ public class UserService {
 
 ## Documentation 
 - [Persistence Common Module](docs/PERSISTENCE_COMMON.md) - Core persistence layer 
-- [Sharding Solution](docs/SHARDING_SOLUTION.md) - Database sharding guide 
+- [TiDB Sharding Solution](docs/TIDB_SHARDING_SOLUTION.md) - TiDB-native sharding design 
+- [TiDB Sharding API Design](docs/TIDB_SHARDING_API_DESIGN.md) - ShardingContext, ShardingAwareQueryService 
+- [TiDB Sharding Concepts](docs/TIDB_SHARDING_CONCEPTS.md) - Region, partition, multi-tenant 
+- [TiDB Observability](docs/TIDB_OBSERVABILITY_DESIGN.md) - Metrics, tracing, logging 
 - [Tradeoffs Analysis](docs/TRADEOFFS.md) - Comparison with MyBatis/Spring Data JPA
-- [Article: Beyond Spring Data JPA](docs/ARTICLE.md) - Detaild benefits analysis
+- [Article: Beyond Spring Data JPA](docs/ARTICLE.md) - Detailed benefits analysis
 
 
 ## Database Support 
@@ -97,37 +100,17 @@ This solution supports multiple relational databases through Hibernate's dialect
 | **DB2** | ✅ Supported | Enterprise database support |
 
 
-### Important: Single Database Type Per Deployment in Cloud Native Envs 
-**CRITICAL**: This solution does **NOT** support mixing different database types in the same configuration. All data sources in a sharding configuration must use the same database type. 
+### TiDB Sharding: One Logical Database
 
-#### ❌ NOT Supported - Mixed Database Types
-
-```yaml 
-# ❌ DO NOT DO THIS - Mixed database types are NOT supported
-dataSources:
-  ds_0:
-    jdbcUrl: jdbc:mysql://localhost:3306/db_0  # MySQL
-  ds_1:
-    jdbcUrl: jdbc:postgresql://localhost:5432/db_1  # PostgreSQL - NOT ALLOWED!
-```
-
-**Why Mixed Types Are Not Supported:**
-- SQL syntax differences cause query failures 
-- Data type mapping inconsistencies 
-- Different performance characteristics 
-- Increased maintenance complexity 
-- Transaction behavior differences 
-- Sharding algorithm incompatibilities 
-
-#### Supported - Single Database Type Per Deployment 
+With **persistence-sharding**, you connect to a **single TiDB cluster** (one JDBC URL). Sharding is expressed in TiDB via **partitioned tables** (`PARTITION BY HASH(sharding_key)`). The application layer uses `ShardingContext` and `@ShardingKey` so that queries always include partition keys, enabling TiDB to prune partitions efficiently.
 
 ```yaml
-# ✅ CORRECT - All shards use the same database type
-dataSources:
-  ds_0:
-    jdbcUrl: jdbc:mysql://localhost:3306/db_0  # MySQL
-  ds_1:
-    jdbcUrl: jdbc:mysql://localhost:3306/db_1  # MySQL - Same type!
+# Single TiDB endpoint (default port 4000)
+spring:
+  datasource:
+    url: jdbc:mysql://tidb-host:4000/your_db
+    username: root
+    password: ...
 ```
 
 ### Multiple Database Support Across Versions
@@ -286,24 +269,22 @@ Works with managed database services:
 - ✅ **Alibaba Cloud RDS** (MySQL, PostgreSQL)
 - ✅ **Database-as-a-Service** providers
 
-### Sharding in Cloud Environments
+### Sharding with TiDB in Cloud Environments
 
-ShardingSphere works excentlly in cloud-native setups: 
+TiDB fits cloud-native setups: one logical database, horizontal scaling by adding TiKV/TiDB nodes. No application-side shard routing.
 
 ```yaml 
-# Cloud-native sharding configuration
-dataSources:
-  ds_0:
-    jdbcUrl: jdbc:mysql://rds-instance-0.region.rds.amazonaws.com:3306/db
-  ds_1:
-    jdbcUrl: jdbc:mysql://rds-instance-1.region.rds.amazonaws.com:3306/db
+# Point to your TiDB cluster (self-hosted or TiDB Cloud)
+spring:
+  datasource:
+    url: jdbc:mysql://tidb-service:4000/app_db
 ```
 
 **Benefits**:
-- Distributed load across multiple database instances
-- Scale databases independently 
-- Highly available through sharding 
-- Cost optimization (smaller instances)
+- Single DataSource; TiDB handles Region distribution and rebalancing
+- Scale by adding nodes; no code or config changes for resharding
+- Partition pruning when queries include sharding keys (`ShardingContext`)
+- Works with TiDB Cloud, Kubernetes (TiDB Operator), or on-prem
 
 ## Modules 
 ### persistence-common 
@@ -316,11 +297,12 @@ Core persistence layer with HQL support:
 
 ### persistence-sharding 
 
-Database sharding support: 
-- `DBHashModShardingAlgorithm` - Database sharding 
-- `TableHashModShardingAlgorithm` - Table sharding 
-- `ShardingAwareQueryService` - Sharding utilities 
-- ShardingSphere integration 
+TiDB-native sharding support (no ShardingSphere): 
+- `ShardingContext` – carry partition/sharding keys per request 
+- `ShardingAwareQueryService` – query API that enforces sharding keys 
+- `ShardingMeta` / `@ShardedEntity` / `@ShardingKey` – entity-level sharding metadata 
+- `ShardedPersistedObject` – optional base class for sharded entities 
+- Spring config: `TiDBShardingSpringConfig`, `AnnotationBasedShardingMetaFactory`
 
 ## Use Cases 
 ### When to Use This Solution 
@@ -378,25 +360,25 @@ public class PersistenceConfig {
 }
 ```
 
-### Sharding Configuration
+### Sharding Configuration (TiDB)
 
-See [docs/README.md](persistence-sharding/README.md) for detailed sharding setup.
+See [persistence-sharding README](persistence-sharding/README.md) and [TiDB Sharding Solution](docs/TIDB_SHARDING_SOLUTION.md) for setup. Use `TiDBShardingSpringConfig` and a `ShardingMeta` bean (e.g. from `AnnotationBasedShardingMetaFactory`).
 
 ## Performance
 
 ### Query Performance
 
-- **Single-shard queries**: Optimized routing to one shard
-- **Cross-shard queries**: Automatic merging by ShardingSphere
-- **Batch operations**: Distributed across shards automatically
+- **Partition pruning**: TiDB prunes partitions when HQL includes sharding keys (via `ShardingContext`)
+- **Single DataSource**: No proxy or client-side routing; TiDB handles distribution
+- **Batch operations**: Hibernate batching + TiDB-friendly DDL (e.g. `AUTO_RANDOM`)
 - **Connection pooling**: HikariCP for optimal performance
 
 ### Scalability
 
-- **Horizontal scaling**: Stateless design enables easy scaling
-- **Database sharding**: Distribute load across multiple databases
-- **Connection management**: Efficient connection pooling
-- **Cloud-optimized**: Designed for cloud database services
+- **Horizontal scaling**: Stateless app design; TiDB scales by adding TiKV/TiDB nodes
+- **TiDB-native sharding**: Regions and partitions managed by TiDB; no app resharding
+- **Connection management**: One connection pool to TiDB
+- **Cloud-optimized**: TiDB Cloud, K8s (TiDB Operator), or on-prem
 
 ## Contributing
 
@@ -409,7 +391,7 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 ## Acknowledgments
 
 - [Hibernate](https://hibernate.org/) - The underlying ORM framework
-- [Apache ShardingSphere](https://shardingsphere.apache.org/) - Database sharding solution
+- [TiDB](https://docs.pingcap.com/tidb/stable) - Distributed SQL database used for native sharding
 - Inspired by the need for a better persistence layer alternative
 
 ## Support
@@ -417,8 +399,9 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 For questions and support:
 - Open an issue on GitHub
 - Check the [documentation](README.md)
-- Review [examples](docs/SHARDING_SOLUTION.md)
+- Review [TiDB sharding docs](docs/TIDB_SHARDING_SOLUTION.md) and [examples](examples/persistence-sharding-example)
 
 ---
 
 **Built with ❤️ for developers who want control, type safety, and cloud-native compatibility.**
+
