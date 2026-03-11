@@ -1,21 +1,22 @@
 package org.tus.common.sharding.entity;
 
-import org.tus.common.domain.persistence.SimplePersistedObject;
+import org.tus.common.domain.persistence.PersistedObject;
 
 /**
  * Optional base class for entities that participate in sharding.
- * <p>
- * This lives in the sharding module and extends the generic SimplePersistedObject
- * from persistence-common, so persistence-common itself does not depend on sharding.
- * <p>
+ *
+ * Extends PersistedObject so they work with QueryService and ShardingAwareQueryService.
+ *
  * Usage:
  * <pre>
- * ShardedEntity
- * public class User extends SharedPersistedObject {
- *    @ShardingKey
- *    private String userId;
+ * &#064;ShardedEntity
+ * &#064;AttributeOverride(name = "id", column = &#064;Column(name = "id"))
+ * public class UserCoupon extends ShardedPersistedObject {
+ *     &#064;ShardingKey
+ *     private Long userId;
  * }
  * </pre>
  */
-public abstract class ShardedPersistedObject extends SimplePersistedObject {
+public abstract class ShardedPersistedObject extends PersistedObject {
 }
+
