@@ -139,10 +139,10 @@ public class ShardingSphereDataSourceConfig {
      * - hibernate.format_sql: Format SQL (default: true)
      * - hibernate.packagesToScan: Entity package scan (default: empty, must be set)
      * 
-     * Example application.yml:
+     * Example application.yml (TiDB/MySQL style):
      * ```yaml
      * hibernate:
-     *   dialect: org.hibernate.dialect.PostgreSQLDialect
+     *   dialect: org.hibernate.dialect.MySQLDialect
      *   hbm2ddl.auto: update
      *   show_sql: true
      *   format_sql: true

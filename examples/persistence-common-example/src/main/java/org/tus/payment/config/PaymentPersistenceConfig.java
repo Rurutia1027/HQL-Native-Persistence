@@ -30,7 +30,7 @@ public class PaymentPersistenceConfig {
     @Value("${app.hibernate.packages-to-scan:org.tus.payment.entity}")
     private String packagesToScan;
 
-    @Value("${spring.jpa.properties.hibernate.dialect:org.hibernate.dialect.PostgreSQLDialect}")
+    @Value("${spring.jpa.properties.hibernate.dialect:org.hibernate.dialect.MySQLDialect}")
     private String hibernateDialect;
 
     @Value("${spring.jpa.hibernate.ddl-auto:update}")
