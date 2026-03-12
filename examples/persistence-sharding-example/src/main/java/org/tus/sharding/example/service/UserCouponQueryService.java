@@ -1,6 +1,5 @@
 package org.tus.sharding.example.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.tus.common.sharding.context.ShardingContext;
 import org.tus.common.sharding.service.ShardingAwareQueryService;
@@ -14,9 +13,13 @@ import java.util.List;
  * with a required sharding context (userId).
  */
 @Service
-@RequiredArgsConstructor
 public class UserCouponQueryService {
+
     private final ShardingAwareQueryService shardingAwareQueryService;
+
+    public UserCouponQueryService(ShardingAwareQueryService shardingAwareQueryService) {
+        this.shardingAwareQueryService = shardingAwareQueryService;
+    }
 
     /**
      * Find user coupons by user id. The sharding context must include userId
@@ -27,7 +30,7 @@ public class UserCouponQueryService {
         return shardingAwareQueryService.querySharded(
                 UserCoupon.class,
                 builder -> {
-                    builder.from(UserCoupon.class).eq("userId", userId);
+                    builder.fromAs(UserCoupon.class, "u").eq("u.userId", userId);
                     return builder.build();
                 },
                 context);

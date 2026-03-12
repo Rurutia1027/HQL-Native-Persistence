@@ -2,6 +2,10 @@ spring:
   application:
     name: persistence-sharding-example
 
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:4000/sharding_example?useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
@@ -15,19 +19,10 @@ spring:
       max-lifetime: 1800000
       pool-name: ShardingExampleHikariPool
 
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: true
-        use_sql_comments: true
-
 persistence:
   sharding:
     mode: STRICT
 
 server:
   port: 8081
+

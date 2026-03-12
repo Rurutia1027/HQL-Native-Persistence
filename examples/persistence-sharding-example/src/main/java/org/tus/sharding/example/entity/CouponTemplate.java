@@ -38,6 +38,7 @@ public class CouponTemplate extends ShardedPersistedObject {
     private Date updateTime;
     private Integer delFlag;
 
+    @Column(name = "shop_number")
     public Long getShopNumber() {
         return shopNumber;
     }
@@ -46,6 +47,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.shopNumber = shopNumber;
     }
 
+    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -54,6 +56,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.name = name;
     }
 
+    @Column(name = "source")
     public Integer getSource() {
         return source;
     }
@@ -62,6 +65,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.source = source;
     }
 
+    @Column(name = "target")
     public Integer getTarget() {
         return target;
     }
@@ -70,6 +74,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.target = target;
     }
 
+    @Column(name = "goods")
     public String getGoods() {
         return goods;
     }
@@ -78,6 +83,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.goods = goods;
     }
 
+    @Column(name = "type")
     public Integer getType() {
         return type;
     }
@@ -86,6 +92,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.type = type;
     }
 
+    @Column(name = "valid_start_time")
     public Date getValidStartTime() {
         return validStartTime;
     }
@@ -94,6 +101,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.validStartTime = validStartTime;
     }
 
+    @Column(name = "valid_end_time")
     public Date getValidEndTime() {
         return validEndTime;
     }
@@ -102,6 +110,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.validEndTime = validEndTime;
     }
 
+    @Column(name = "stock")
     public Integer getStock() {
         return stock;
     }
@@ -110,6 +119,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.stock = stock;
     }
 
+    @Column(name = "receive_rule")
     public String getReceiveRule() {
         return receiveRule;
     }
@@ -118,6 +128,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.receiveRule = receiveRule;
     }
 
+    @Column(name = "consume_rule")
     public String getConsumeRule() {
         return consumeRule;
     }
@@ -126,6 +137,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.consumeRule = consumeRule;
     }
 
+    @Column(name = "status")
     public Integer getStatus() {
         return status;
     }
@@ -134,6 +146,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.status = status;
     }
 
+    @Column(name = "create_time")
     public Date getCreateTime() {
         return createTime;
     }
@@ -142,6 +155,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.createTime = createTime;
     }
 
+    @Column(name = "update_time")
     public Date getUpdateTime() {
         return updateTime;
     }
@@ -150,6 +164,7 @@ public class CouponTemplate extends ShardedPersistedObject {
         this.updateTime = updateTime;
     }
 
+    @Column(name = "del_flag")
     public Integer getDelFlag() {
         return delFlag;
     }
